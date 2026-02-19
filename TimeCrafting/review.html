@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>タイムクラフティング — 週の振り返り</title>
+  <link rel="stylesheet" href="../LP/style.css" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body class="app-body review-body">
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a href="schedule.html" class="app-logo">⏳ <span>TimeCrafting</span></a>
+      <div class="app-header-center">週の振り返り</div>
+      <div class="app-header-actions">
+        <span class="app-cycle-badge" id="cycleBadge">—</span>
+      </div>
+    </div>
+  </header>
+
+  <main class="review-main">
+
+    <!-- ===== Step 1: 総合スコア ===== -->
+    <section class="review-section" id="reviewStep1">
+      <div class="review-card">
+        <h2 class="review-section-title">🌟 今週の総合満足度</h2>
+        <p class="review-section-sub">全体的にどんな週でしたか？</p>
+
+        <div class="overall-score-wrap">
+          <div class="score-display" id="overallDisplay">—</div>
+          <input type="range" id="overallScore" min="1" max="10" value="7"
+                 class="score-slider"
+                 oninput="updateOverallScore(this.value)" />
+          <div class="score-labels">
+            <span>1 つらい</span>
+            <span>10 最高</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Step 2: 5次元評価 ===== -->
+    <section class="review-section">
+      <h2 class="review-section-title">📊 5つの視点から振り返る</h2>
+
+      <div class="dim-grid" id="dimGrid">
+
+        <!-- 仕事 -->
+        <div class="dim-card" data-dim="work">
+          <div class="dim-header">
+            <span class="dim-icon">🏢</span>
+            <div>
+              <p class="dim-name">仕事</p>
+              <p class="dim-desc">成果・充実感・達成感</p>
+            </div>
+            <span class="dim-score-badge" id="badge_work">—</span>
+          </div>
+          <input type="range" min="1" max="10" value="7" class="dim-slider"
+                 id="slider_work" oninput="updateDimScore('work', this.value)" />
+          <div class="dim-stats" id="stats_work"></div>
+          <textarea class="dim-comment" id="comment_work"
+                    placeholder="今週の仕事について感じたこと..."></textarea>
+        </div>
+
+        <!-- つながり -->
+        <div class="dim-card" data-dim="relationships">
+          <div class="dim-header">
+            <span class="dim-icon">🤝</span>
+            <div>
+              <p class="dim-name">つながり</p>
+              <p class="dim-desc">人間関係・会話・サポート</p>
+            </div>
+            <span class="dim-score-badge" id="badge_relationships">—</span>
+          </div>
+          <input type="range" min="1" max="10" value="7" class="dim-slider"
+                 id="slider_relationships" oninput="updateDimScore('relationships', this.value)" />
+          <div class="dim-stats" id="stats_relationships"></div>
+          <textarea class="dim-comment" id="comment_relationships"
+                    placeholder="人とのつながりについて感じたこと..."></textarea>
+        </div>
+
+        <!-- 体と心 -->
+        <div class="dim-card" data-dim="health">
+          <div class="dim-header">
+            <span class="dim-icon">❤️</span>
+            <div>
+              <p class="dim-name">体と心</p>
+              <p class="dim-desc">睡眠・運動・体調・気分</p>
+            </div>
+            <span class="dim-score-badge" id="badge_health">—</span>
+          </div>
+          <input type="range" min="1" max="10" value="7" class="dim-slider"
+                 id="slider_health" oninput="updateDimScore('health', this.value)" />
+          <div class="dim-stats" id="stats_health"></div>
+          <textarea class="dim-comment" id="comment_health"
+                    placeholder="体と心の状態について感じたこと..."></textarea>
+        </div>
+
+        <!-- 学び -->
+        <div class="dim-card" data-dim="growth">
+          <div class="dim-header">
+            <span class="dim-icon">🚀</span>
+            <div>
+              <p class="dim-name">学び</p>
+              <p class="dim-desc">成長・スキル・新しい発見</p>
+            </div>
+            <span class="dim-score-badge" id="badge_growth">—</span>
+          </div>
+          <input type="range" min="1" max="10" value="7" class="dim-slider"
+                 id="slider_growth" oninput="updateDimScore('growth', this.value)" />
+          <div class="dim-stats" id="stats_growth"></div>
+          <textarea class="dim-comment" id="comment_growth"
+                    placeholder="学びや成長について感じたこと..."></textarea>
+        </div>
+
+        <!-- ゆとり -->
+        <div class="dim-card" data-dim="freeTime">
+          <div class="dim-header">
+            <span class="dim-icon">🌿</span>
+            <div>
+              <p class="dim-name">ゆとり</p>
+              <p class="dim-desc">自由時間・趣味・リラックス</p>
+            </div>
+            <span class="dim-score-badge" id="badge_freeTime">—</span>
+          </div>
+          <input type="range" min="1" max="10" value="7" class="dim-slider"
+                 id="slider_freeTime" oninput="updateDimScore('freeTime', this.value)" />
+          <div class="dim-stats" id="stats_freeTime"></div>
+          <textarea class="dim-comment" id="comment_freeTime"
+                    placeholder="ゆとりについて感じたこと..."></textarea>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===== Step 3: AI 提案 ===== -->
+    <section class="review-section" id="proposalSection">
+      <h2 class="review-section-title">💡 来週へのアドバイス</h2>
+      <p class="review-section-sub">スコアから自動生成しました。取り入れたいものを選んでください。</p>
+      <div id="proposalCards" class="proposal-list">
+        <!-- JS で生成 -->
+      </div>
+    </section>
+
+    <!-- ===== Step 4: シェアカード (Leo 提案) ===== -->
+    <section class="review-section">
+      <h2 class="review-section-title">📤 今週をシェアする</h2>
+      <p class="review-section-sub">満足度カードをワンタップで生成してシェアできます。</p>
+
+      <div class="share-preview-wrap">
+        <canvas id="shareCanvas" width="600" height="315"></canvas>
+      </div>
+
+      <div class="share-actions">
+        <button class="btn btn-outline" onclick="generateShareCard()">🎨 カードを生成</button>
+        <button class="btn btn-primary" onclick="downloadShareCard()">⬇️ 画像を保存</button>
+      </div>
+      <p class="ob-hint">生成後、画像を保存して X(Twitter) / LINE でシェアしてください。</p>
+    </section>
+
+    <!-- ===== 保存ボタン ===== -->
+    <div class="review-footer">
+      <button class="btn btn-primary review-save-btn" onclick="saveReview()">
+        振り返りを保存して翌週へ →
+      </button>
+    </div>
+
+  </main>
+
+  <!-- Chart.js（遅延ロード） -->
+  <script>
+    // 満足度履歴グラフは7日後以降にのみ表示
+    const hasHistory = JSON.parse(localStorage.getItem('tc_reviews') || '[]').length > 0;
+    if (hasHistory) {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js';
+      s.onload = () => initHistoryChart();
+      document.head.appendChild(s);
+    }
+  </script>
+  <script src="review.js"></script>
+</body>
+</html>

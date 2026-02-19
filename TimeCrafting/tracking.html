@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>タイムクラフティング — 今日の記録</title>
+  <link rel="stylesheet" href="../LP/style.css" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body class="app-body">
+
+  <header class="app-header">
+    <div class="app-header-inner">
+      <a href="schedule.html" class="app-logo">⏳ <span>TimeCrafting</span></a>
+      <div class="app-header-center" id="todayLabel">今日の記録</div>
+      <div class="app-header-actions">
+        <a href="schedule.html" class="btn btn-ghost btn-sm">← スケジュール</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="track-layout">
+
+    <!-- 左: 今日のブロック一覧 -->
+    <main class="track-main">
+      <div class="track-date-nav">
+        <button class="btn btn-ghost btn-sm" id="prevDayBtn" onclick="changeDay(-1)">← 前日</button>
+        <h2 class="track-date" id="trackDate">—</h2>
+        <button class="btn btn-ghost btn-sm" id="nextDayBtn" onclick="changeDay(1)">翌日 →</button>
+      </div>
+
+      <div id="blockCards" class="block-card-list">
+        <!-- JS で生成 -->
+      </div>
+    </main>
+
+    <!-- 右: 当日サマリー -->
+    <aside class="track-summary">
+      <div class="summary-card">
+        <p class="sidebar-label">今日のサマリー</p>
+        <div class="summary-row">
+          <span class="summary-label">完了ブロック</span>
+          <span class="summary-val" id="completedCount">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">実績時間合計</span>
+          <span class="summary-val" id="totalActual">—</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">見積もりとの差</span>
+          <span class="summary-val" id="diffTime">—</span>
+        </div>
+      </div>
+
+      <div class="summary-card">
+        <p class="sidebar-label">週間進捗</p>
+        <div id="weekProgress" class="week-progress">
+          <!-- JS で生成 -->
+        </div>
+      </div>
+
+      <!-- サイクル終了チェック -->
+      <div class="summary-card" id="reviewNudge" style="display:none;">
+        <p class="sidebar-label">振り返り</p>
+        <p class="nudge-text">サイクル最終日です！<br>今週の満足度を振り返りましょう。</p>
+        <a href="review.html" class="btn btn-primary btn-full" style="margin-top:12px;">振り返りをはじめる →</a>
+      </div>
+    </aside>
+  </div>
+
+  <!-- 実績入力モーダル -->
+  <div class="modal-overlay" id="trackModal" style="display:none;" onclick="closeTrackModal(event)">
+    <div class="modal">
+      <h3 id="trackModalTitle">実績を記録</h3>
+      <input type="hidden" id="trackingBlockId" />
+
+      <label>ステータス
+        <select id="trackStatus">
+          <option value="completed">完了 ✅</option>
+          <option value="in_progress">進行中 ⏳</option>
+          <option value="skipped">スキップ ⏭</option>
+        </select>
+      </label>
+
+      <label>実績時間（分）
+        <input type="number" id="trackActual" min="0" max="480" step="5" placeholder="例：110" />
+      </label>
+
+      <div class="track-mood-wrap">
+        <p class="ob-label" style="margin-bottom:8px;">集中度</p>
+        <div class="mood-stars" id="focusStars" data-key="focus"></div>
+      </div>
+
+      <div class="track-mood-wrap">
+        <p class="ob-label" style="margin-bottom:8px;">疲労感</p>
+        <div class="mood-stars" id="energyStars" data-key="energy"></div>
+      </div>
+
+      <label>メモ（任意）
+        <input type="text" id="trackNote" placeholder="気づきや感想" />
+      </label>
+
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeBlockTrackModal()">キャンセル</button>
+        <button class="btn btn-primary" onclick="saveTracking()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="tracking.js"></script>
+</body>
+</html>

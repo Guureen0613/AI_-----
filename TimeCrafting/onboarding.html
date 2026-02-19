@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>タイムクラフティング — はじめる</title>
+  <link rel="stylesheet" href="../LP/style.css" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body class="ob-body">
+
+  <!-- ===== プログレスバー ===== -->
+  <div class="ob-progress-wrap">
+    <div class="ob-progress-bar" id="progressBar"></div>
+  </div>
+
+  <!-- ===== 画面コンテナ ===== -->
+  <main class="ob-main">
+
+    <!-- 画面1: Welcome -->
+    <section class="ob-screen active" id="screen1">
+      <div class="ob-card">
+        <span class="ob-emoji">⏳</span>
+        <h1 class="ob-title">時間に<br>追われていますか？</h1>
+        <p class="ob-sub">タイムクラフティングは、時間を管理するのではなく<br>「自分らしい時間」をデザインするアプリです。</p>
+        <div class="ob-btn-group">
+          <button class="btn btn-primary ob-btn-large" onclick="nextScreen(2)">
+            はい、追われています 😩
+          </button>
+          <button class="btn btn-outline ob-btn-large" onclick="nextScreen(2)">
+            うまくやれてます 😌
+          </button>
+        </div>
+        <p class="ob-hint">どちらを選んでも大丈夫。まずは試してみましょう。</p>
+      </div>
+    </section>
+
+    <!-- 画面2: 目標自由時間（必須） -->
+    <section class="ob-screen" id="screen2">
+      <div class="ob-card">
+        <span class="ob-emoji">🌿</span>
+        <h1 class="ob-title">1日どのくらいの<br>ゆとりが欲しいですか？</h1>
+        <p class="ob-sub">「ゆとり」＝何をするか決めない自由な時間のこと。<br>2〜5時間が心地よいと言われています。</p>
+
+        <div class="ob-choice-group" id="freeTimeChoices">
+          <button class="ob-choice" data-value="2" onclick="selectFreeTime(this)">
+            <span class="ob-choice-num">2時間</span>
+            <span class="ob-choice-desc">ミニマル派</span>
+          </button>
+          <button class="ob-choice ob-choice-recommended" data-value="3" onclick="selectFreeTime(this)">
+            <span class="ob-choice-num">3時間</span>
+            <span class="ob-choice-desc">おすすめ ★</span>
+          </button>
+          <button class="ob-choice" data-value="4" onclick="selectFreeTime(this)">
+            <span class="ob-choice-num">4時間</span>
+            <span class="ob-choice-desc">ゆったり派</span>
+          </button>
+          <button class="ob-choice" data-value="5" onclick="selectFreeTime(this)">
+            <span class="ob-choice-num">5時間</span>
+            <span class="ob-choice-desc">のんびり派</span>
+          </button>
+        </div>
+
+        <button class="btn btn-primary ob-btn-large ob-btn-next" id="freeTimeNext" disabled onclick="nextScreen(3)">
+          次へ →
+        </button>
+        <p class="ob-hint">後からいつでも変更できます</p>
+      </div>
+    </section>
+
+    <!-- 画面3: 今週のスケジュールを組む -->
+    <section class="ob-screen" id="screen3">
+      <div class="ob-card ob-card-wide">
+        <span class="ob-emoji">📅</span>
+        <h1 class="ob-title">まず「動かせない時間」を<br>置いてみましょう</h1>
+        <p class="ob-sub">仕事・食事・睡眠など、今日から7日間の固定ブロックを選んでください。</p>
+
+        <!-- サイクル期間表示 -->
+        <div class="ob-cycle-info" id="cycleInfo"></div>
+
+        <!-- テンプレートボタン群 -->
+        <div class="ob-template-group">
+          <p class="ob-label">生活行動テンプレート（タップで追加）</p>
+          <div class="ob-templates" id="templates">
+            <button class="ob-tpl" onclick="addTemplate('meal-lunch', '🍱 昼食', 'meal', 12, 14)">🍱 昼食</button>
+            <button class="ob-tpl" onclick="addTemplate('meal-dinner', '🍜 夕食', 'meal', 19, 21)">🍜 夕食</button>
+            <button class="ob-tpl" onclick="addTemplate('bath', '🛁 入浴', 'rest', 21, 23)">🛁 入浴</button>
+            <button class="ob-tpl" onclick="addTemplate('sleep', '😴 睡眠', 'sleep', 23, 25)">😴 睡眠</button>
+            <button class="ob-tpl" onclick="addTemplate('work', '💼 仕事', 'work', 9, 17)">💼 仕事</button>
+            <button class="ob-tpl" onclick="addTemplate('commute', '🚃 通勤', 'commute', 8, 9)">🚃 通勤</button>
+            <button class="ob-tpl" onclick="addTemplate('exercise', '🏋️ 運動', 'exercise', 7, 9)">🏋️ 運動</button>
+            <button class="ob-tpl ob-tpl-custom" onclick="openCustomBlock()">＋ カスタム</button>
+          </div>
+        </div>
+
+        <!-- 追加されたブロック一覧 -->
+        <div class="ob-added-blocks" id="addedBlocks">
+          <p class="ob-label">追加したブロック <span id="blockCount">0</span>件</p>
+          <div id="blockList" class="ob-block-list">
+            <p class="ob-empty-hint">上のテンプレートからブロックを追加してください</p>
+          </div>
+        </div>
+
+        <div class="ob-btn-group ob-btn-group-row">
+          <button class="btn btn-outline" onclick="nextScreen(2)">← 戻る</button>
+          <button class="btn btn-primary ob-btn-next" id="scheduleNext" onclick="nextScreen(4)">
+            次へ →
+          </button>
+        </div>
+        <p class="ob-hint">後でいくらでも編集できます。まずは大まかでOK。</p>
+      </div>
+    </section>
+
+    <!-- 画面4: 残り時間確認 & コンバイン提案 -->
+    <section class="ob-screen" id="screen4">
+      <div class="ob-card">
+        <span class="ob-emoji">✨</span>
+        <h1 class="ob-title">今週のゆとり時間を<br>確認しましょう</h1>
+
+        <div class="ob-free-summary" id="freeSummary">
+          <!-- JS で動的生成 -->
+        </div>
+
+        <!-- コンバイン提案エリア -->
+        <div class="ob-combine-area" id="combineArea" style="display:none;">
+          <div class="ob-combine-card">
+            <p class="ob-combine-title">💡 組み合わせ提案</p>
+            <p class="ob-combine-body" id="combineBody"></p>
+            <div class="ob-btn-group ob-btn-group-row">
+              <button class="btn btn-outline btn-sm" onclick="dismissCombine()">スキップ</button>
+              <button class="btn btn-primary btn-sm" onclick="acceptCombine()">まとめる</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ob-btn-group ob-btn-group-row">
+          <button class="btn btn-outline" onclick="nextScreen(3)">← 戻る</button>
+          <button class="btn btn-primary ob-btn-large" onclick="nextScreen(5)">
+            このまま進む →
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 画面5: 完了 -->
+    <section class="ob-screen" id="screen5">
+      <div class="ob-card ob-card-center">
+        <div class="ob-success-icon">🎉</div>
+        <h1 class="ob-title">今週の設計が<br>できました！</h1>
+        <p class="ob-sub">スケジュールが整うと、脳の迷いが減り<br>自然と行動できるようになります。</p>
+
+        <div class="ob-next-steps">
+          <div class="ob-step-item">
+            <span class="ob-step-icon">📅</span>
+            <div>
+              <p class="ob-step-title">毎日（1〜2分）</p>
+              <p class="ob-step-desc">実績を記録する</p>
+            </div>
+          </div>
+          <div class="ob-step-item">
+            <span class="ob-step-icon">🌙</span>
+            <div>
+              <p class="ob-step-title">サイクル最終日（5〜10分）</p>
+              <p class="ob-step-desc">満足度を振り返り、翌週を設計する</p>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn btn-primary ob-btn-large" onclick="finishOnboarding()">
+          アプリをはじめる →
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- カスタムブロック入力モーダル -->
+  <div class="ob-modal-overlay" id="customModal" style="display:none;" onclick="closeModal(event)">
+    <div class="ob-modal">
+      <h3>カスタムブロックを追加</h3>
+      <label>名前
+        <input type="text" id="customTitle" placeholder="例：読書、ミーティング" />
+      </label>
+      <label>カテゴリ
+        <select id="customCategory">
+          <option value="work">仕事</option>
+          <option value="meal">食事</option>
+          <option value="rest">休息</option>
+          <option value="exercise">運動</option>
+          <option value="hobby">趣味</option>
+          <option value="other">その他</option>
+        </select>
+      </label>
+      <label>開始時刻（24h）
+        <input type="number" id="customStart" min="0" max="23" placeholder="例：9" />
+      </label>
+      <label>終了時刻（24h）
+        <input type="number" id="customEnd" min="1" max="26" placeholder="例：11" />
+      </label>
+      <div class="ob-btn-group ob-btn-group-row">
+        <button class="btn btn-ghost" onclick="closeCustomModal()">キャンセル</button>
+        <button class="btn btn-primary" onclick="addCustomBlock()">追加する</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="onboarding.js"></script>
+</body>
+</html>

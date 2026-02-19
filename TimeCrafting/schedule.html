@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>タイムクラフティング — 週間スケジュール</title>
+  <link rel="stylesheet" href="../LP/style.css" />
+  <link rel="stylesheet" href="app.css" />
+</head>
+<body class="app-body">
+
+  <!-- ===== ヘッダー ===== -->
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="app-logo">
+        ⏳ <span>TimeCrafting</span>
+      </div>
+      <div class="app-header-center" id="cycleLabel">Week 1</div>
+      <div class="app-header-actions">
+        <button class="btn btn-outline btn-sm" id="lockBtn" onclick="toggleLock()">スケジュール確定</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== メインレイアウト ===== -->
+  <div class="app-layout">
+
+    <!-- サイドパネル：自由時間サマリー + タスクリスト -->
+    <aside class="app-sidebar">
+      <div class="sidebar-card">
+        <p class="sidebar-label">今週のゆとり時間</p>
+        <div class="free-meter" id="freeMeter">
+          <div class="free-meter-val" id="freeMeterVal">— h</div>
+          <div class="free-meter-bar-wrap">
+            <div class="free-meter-bar" id="freeMeterBar" style="width:0%"></div>
+          </div>
+          <div class="free-meter-target">目標: <span id="freeTarget">3</span>h / 日</div>
+        </div>
+      </div>
+
+      <div class="sidebar-card">
+        <div class="sidebar-label-row">
+          <p class="sidebar-label">タスクリスト</p>
+          <button class="btn-icon" onclick="openAddTaskModal()" title="タスク追加">＋</button>
+        </div>
+        <div id="taskList" class="task-list">
+          <p class="empty-hint">タスクを追加してください</p>
+        </div>
+      </div>
+
+      <div class="sidebar-card sidebar-status" id="sidebarStatus">
+        <p class="sidebar-label">スケジュール状態</p>
+        <span class="status-badge status-draft" id="statusBadge">下書き</span>
+      </div>
+    </aside>
+
+    <!-- グリッドエリア -->
+    <main class="app-grid-wrap">
+
+      <!-- 日付ヘッダー行 -->
+      <div class="grid-header" id="gridHeader">
+        <div class="grid-time-col"></div>
+        <!-- JS で動的生成 -->
+      </div>
+
+      <!-- スクロール可能な時間グリッド -->
+      <div class="grid-scroll">
+        <div class="grid-body" id="gridBody">
+          <!-- JS で動的生成 -->
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ===== ブロック追加モーダル ===== -->
+  <div class="modal-overlay" id="blockModal" style="display:none;" onclick="closeModal(event, 'blockModal')">
+    <div class="modal">
+      <h3 id="modalTitle">ブロックを追加</h3>
+      <input type="hidden" id="editBlockId" />
+      <label>タイトル
+        <input type="text" id="blockTitle" placeholder="例：仕事・昼食・散歩" />
+      </label>
+      <label>タイプ
+        <select id="blockType" onchange="onBlockTypeChange()">
+          <option value="fixed">固定（仕事・会議など）</option>
+          <option value="life">生活行動（食事・睡眠など）</option>
+          <option value="task">タスク</option>
+          <option value="free">ゆとり時間</option>
+        </select>
+      </label>
+      <label id="taskLinkWrap" style="display:none;">タスクを紐づける
+        <select id="linkedTask">
+          <option value="">— タスクを選択 —</option>
+        </select>
+      </label>
+      <label>開始時刻（0〜23時）
+        <input type="number" id="blockStart" min="0" max="23" placeholder="例：9" />
+      </label>
+      <label>終了時刻（1〜24時）
+        <input type="number" id="blockEnd" min="1" max="24" placeholder="例：11" />
+      </label>
+      <label>適用する日
+        <select id="blockDays" multiple style="height:130px;">
+          <!-- JS で動的生成 -->
+        </select>
+        <span class="form-hint">Ctrl(Cmd)+クリックで複数選択</span>
+      </label>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeBlockModal()">キャンセル</button>
+        <button id="deleteBlockBtn" class="btn btn-danger" style="display:none;" onclick="deleteBlock()">削除</button>
+        <button class="btn btn-primary" onclick="saveBlock()">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== タスク追加モーダル ===== -->
+  <div class="modal-overlay" id="taskModal" style="display:none;" onclick="closeModal(event, 'taskModal')">
+    <div class="modal">
+      <h3>タスクを追加</h3>
+      <label>タスク名
+        <input type="text" id="taskTitle" placeholder="例：資料作成、コードレビュー" />
+      </label>
+      <label>カテゴリ
+        <select id="taskCategory">
+          <option value="work">仕事</option>
+          <option value="study">学習</option>
+          <option value="hobby">趣味</option>
+          <option value="exercise">運動</option>
+          <option value="other">その他</option>
+        </select>
+      </label>
+      <label>見積もり時間（分）
+        <input type="number" id="taskEstimate" min="15" max="240" step="15" placeholder="例：90" />
+      </label>
+      <label>優先度
+        <select id="taskPriority">
+          <option value="high">高</option>
+          <option value="medium" selected>中</option>
+          <option value="low">低</option>
+        </select>
+      </label>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" onclick="closeTaskModal()">キャンセル</button>
+        <button class="btn btn-primary" onclick="saveTask()">追加</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="schedule.js"></script>
+</body>
+</html>
